@@ -12,25 +12,25 @@ module.exports = {
     },
 
     /*添加用户
-    * - 请求路径：users
-    * - 请求方法：post
-    *- 请求参数
-    * */
+     * - 请求路径：users
+     * - 请求方法：post
+     *- 请求参数
+     * */
     AddUsers: api + 'users', //添加用户
 
     /*根据id查询用户信息
-    * users/:id
-    * */
-    SearchUsers(id){
+     * users/:id
+     * */
+    SearchUsers(id) {
         return `${api}users/${id}`
     },
     /*编辑用户提交
-    * users/:id
-    * params:{
-    *   id,email,moblie
-    * }
-    * */
-    editUser(id){
+     * users/:id
+     * params:{
+     *   id,email,moblie
+     * }
+     * */
+    editUser(id) {
         return `${api}users/${id}`
     },
     /*删除用户
@@ -38,21 +38,37 @@ module.exports = {
         - 请求方法：delete
         - 请求参数 id用户 id不能为空`参数是url参数:id`
     * */
-    deleteUser(id){
+    deleteUser(id) {
         return `${api}users/${id}`
     },
 
     /*
-    * 获取权限列表
-    * rights/:type
-    * type类型值 list 或 tree ,
-    * list 列表显示权限,
-    * tree 树状显示权限,`参数是url参数:type`
-    * */
+     * 获取权限列表
+     * rights/:type
+     * type类型值 list 或 tree ,
+     * list 列表显示权限,
+     * tree 树状显示权限,`参数是url参数:type`
+     * */
     PowerList: api + 'rights/list',
 
     /*角色列表*/
-    RolesList :api +'roles'
+    RolesList: api + 'roles',
+
+    /*删除角色 
+     // roles/:roleId/rights/:rightId
+    */
+    deleteRolesRights(roleId, rightId) {
+        return `${api}roles/${roleId}/rights/${rightId}`
+    },
+    /* 所有权限列表 */
+    RulesPowerList: api + 'rights/tree',
+
+    /*角色授权 
+        roles/:roleId/rights
+    */
+    Impower(roleId) {
+        return `${api}roles/${roleId}`
+    },
 
 
 
