@@ -40,7 +40,20 @@ module.exports = {
     * */
     deleteUser(id){
         return `${api}users/${id}`
-    }
+    },
+
+    /*
+    * 获取权限列表
+    * rights/:type
+    * type类型值 list 或 tree ,
+    * list 列表显示权限,
+    * tree 树状显示权限,`参数是url参数:type`
+    * */
+    PowerList: api + 'rights/list',
+
+    /*角色列表*/
+    RolesList :api +'roles'
+
 
 
 }

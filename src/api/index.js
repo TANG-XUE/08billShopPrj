@@ -77,6 +77,21 @@ export default {
     * */
     deleteUserFn(id){
         return axios.delete(url.deleteUser(id))
+    },
+    /*
+    * 获取权限列表
+    * rights/:type get
+    * type类型值 list 或 tree ,
+    * list 列表显示权限,
+    * tree 树状显示权限,`参数是url参数:type`
+    * */
+    getPowerList(){
+        return axios.get(url.PowerList)
+    },
+
+    /*角色列表*/
+    getRolesList(){
+        return axios.get(url.RolesList)
     }
 
 }
