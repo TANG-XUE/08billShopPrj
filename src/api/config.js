@@ -77,5 +77,58 @@ module.exports = {
     },
 
 
+    /*
+    * 商品分类数据列表
+    * url:categories get
+    * params
+        | type     | [1,2,3]            | 值：1，2，3 分别表示显示一层二层三层分类列表<br />【可选参数】如果不传递，则默认获取所有级别的分类 |
+        | pagenum  | 当前页码值         | 【可选参数】如果不传递，则默认获取所有分类                   |
+        | pagesize | 每页显示多少条数据 | 【可选参数】如果不传递，则默认获取所有分类                   |
+    * */
+    CategoriesList :api +'categories',
+
+    /*
+    * 添加商品分类
+    * url:categories post
+    * params
+        cat_pid分类父 ID不能为空，如果要添加1级分类，则父分类Id应该设置为  `0`cat_name分类名称不能为空cat_level分类层级不能为空，`0`表示一级分类；`1`表示二级分类；`2`表示三级分类
+        cat_name分类名称不能为空cat_level分类层级不能为空，`0`表示一级分类；`1`表示二级分类；`2`表示三级分类
+        cat_level分类层级不能为空，`0`表示一级分类；`1`表示二级分类；`2`表示三级分类
+    * */
+    AddCategories:api +'categories',
+
+    /*
+    * 根据 id 查询分类
+    * url categories/:id get
+    * params
+        :id分类 ID不能为空`携带在url中`
+    * */
+    CategoriesSigle(id){
+        return `${api}categories/${id}`
+    },
+
+    /*
+   * 编辑提交分类
+   * url categories/:id put
+   * params
+       :id分类 ID不能为空`携带在url中`
+       cat_name分类名称不能为空【此参数，放到请求体中】
+   * */
+    UpdateCategories(id){
+        return `${api}categories/${id}`
+    },
+
+    /*
+   * 删除分类
+   * url categories/:id delete
+   * params
+       :id分类 ID不能为空`携带在url中`
+   * */
+    DeleteCategories(id){
+        return `${api}categories/${id}`
+    },
+
+
+
 
 }
