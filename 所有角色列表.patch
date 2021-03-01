@@ -1,0 +1,315 @@
+Index: src/api/config.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/api/config.js	(revision fbd4d791f575fe63e07677345be3195449fb30e0)
++++ src/api/config.js	(revision 0dfbe2334d440547b455c4310ea3669d854bbd95)
+@@ -40,7 +40,20 @@
+     * */
+     deleteUser(id){
+         return `${api}users/${id}`
+-    }
++    },
++
++    /*
++    * 获取权限列表
++    * rights/:type
++    * type类型值 list 或 tree ,
++    * list 列表显示权限,
++    * tree 树状显示权限,`参数是url参数:type`
++    * */
++    PowerList: api + 'rights/list',
++
++    /*角色列表*/
++    RolesList :api +'roles'
++
+ 
+ 
+ }
+\ No newline at end of file
+Index: src/api/index.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/api/index.js	(revision fbd4d791f575fe63e07677345be3195449fb30e0)
++++ src/api/index.js	(revision 0dfbe2334d440547b455c4310ea3669d854bbd95)
+@@ -77,6 +77,21 @@
+     * */
+     deleteUserFn(id){
+         return axios.delete(url.deleteUser(id))
++    },
++    /*
++    * 获取权限列表
++    * rights/:type get
++    * type类型值 list 或 tree ,
++    * list 列表显示权限,
++    * tree 树状显示权限,`参数是url参数:type`
++    * */
++    getPowerList(){
++        return axios.get(url.PowerList)
++    },
++
++    /*角色列表*/
++    getRolesList(){
++        return axios.get(url.RolesList)
+     }
+ 
+ }
+\ No newline at end of file
+Index: src/assets/styles/global.css
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/assets/styles/global.css	(revision fbd4d791f575fe63e07677345be3195449fb30e0)
++++ src/assets/styles/global.css	(revision 0dfbe2334d440547b455c4310ea3669d854bbd95)
+@@ -8,6 +8,7 @@
+     height: 100%;
+     margin: 0;
+     padding: 0;
++    min-width: 1366px;
+ }
+ .el-breadcrumb{
+     margin-bottom: 15px;
+Index: src/components/rights/Rights.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/components/rights/Rights.vue	(revision 0dfbe2334d440547b455c4310ea3669d854bbd95)
++++ src/components/rights/Rights.vue	(revision 0dfbe2334d440547b455c4310ea3669d854bbd95)
+@@ -0,0 +1,67 @@
++<template>
++    <div class="Rights">
++        <!--面包屑导航区域-->
++        <el-breadcrumb separator="/">
++            <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
++            <el-breadcrumb-item>权限管理</el-breadcrumb-item>
++            <el-breadcrumb-item>权限列表</el-breadcrumb-item>
++        </el-breadcrumb>
++
++        <!--卡片视图区域-->
++        <el-card>
++            <!--列表-->
++            <el-table :data="rightsList" border stripe>
++                <el-table-column label="序号" type="index"></el-table-column>
++                <el-table-column label="权限名称" prop="authName"></el-table-column>
++                <el-table-column label="路径" prop="path"></el-table-column>
++                <el-table-column label="权限等级" prop="level">
++                    <template slot-scope="scope">
++                        <el-tag v-if="scope.row.level ==='0'">一级权限</el-tag>
++                        <el-tag v-else-if="scope.row.level ==='1'" type="success">二级权限</el-tag>
++                        <el-tag v-else type="warning">三级权限</el-tag>
++                    </template>
++                </el-table-column>
++            </el-table>
++            <!--分页-->
++
++        </el-card>
++
++    </div>
++</template>
++
++<script>
++    import api from '@/api/index.js'
++    export default {
++        name: "Rights",
++        data() {
++            return {
++                //权限列表
++                rightsList:[]
++            }
++        },
++        mounted() {
++            this.getPowerList();
++        },
++        methods:{
++            //获取权限列表
++            async getPowerList(){
++                let res = await api.getPowerList()
++                if(res.meta.status!=200) return this.$message.error("获取权限列表失败！")
++                this.rightsList = res.data;
++                console.log(res)
++            },
++            handleSizeChange(){
++
++            },
++            handleCurrentChange(){
++
++            }
++        },
++        components: {}
++    }
++
++</script>
++
++<style scoped>
++
++</style>
+\ No newline at end of file
+Index: src/components/rights/Roles.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/components/rights/Roles.vue	(revision 0dfbe2334d440547b455c4310ea3669d854bbd95)
++++ src/components/rights/Roles.vue	(revision 0dfbe2334d440547b455c4310ea3669d854bbd95)
+@@ -0,0 +1,103 @@
++<template>
++    <div class="Roles">
++        <!--面包屑导航区域-->
++        <el-breadcrumb separator="/">
++            <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
++            <el-breadcrumb-item>权限管理</el-breadcrumb-item>
++            <el-breadcrumb-item>角色列表</el-breadcrumb-item>
++        </el-breadcrumb>
++        <!--卡片视图区域-->
++        <el-card>
++            <!--添加角色按钮-->
++            <el-row>
++                <el-col>
++                    <el-button type="primary">添加角色</el-button>
++                </el-col>
++            </el-row>
++            <!--列表-->
++            <el-table :data="rolesList" border stripe>
++                <!--展开列-->
++                <el-table-column type="expand">
++                    <template slot-scope="scope">
++                        <el-row :class="['bdbottom',index1===0?'bdtop':'','vcenter']" v-for="(item1,index1) in scope.row.children" :key="item1.id">
++                            <!--渲染一级权限-->
++                            <el-col :span="5">
++                                <el-tag>{{item1.authName}}</el-tag>
++                                <i class="el-icon-caret-right"></i>
++                            </el-col>
++                            <!--渲染二和三级权限-->
++                            <el-col :span="19">
++                                <el-row :class="[index2===0?'':'bdtop']" v-for="(item2,index2) in item1.children" :key="item2.id">
++                                    <el-col :span="6">
++                                        <el-tag type="success">{{item2.authName}}</el-tag>
++                                        <i class="el-icon-caret-right"></i>
++                                    </el-col>
++                                    <el-col :span="18">
++                                        <el-tag type="warning" v-for="(item3,index3) in item2.children" :key="item3.id">{{item3.authName}}</el-tag>
++                                    </el-col>
++                                </el-row>
++                            </el-col>
++                        </el-row>
++                        <pre>
++
++                        </pre>
++                    </template>
++                </el-table-column>
++                <el-table-column label="序号" type="index"></el-table-column>
++                <el-table-column label="角色名称" prop="roleName"></el-table-column>
++                <el-table-column label="角色描述" prop="roleDesc"></el-table-column>
++                <el-table-column label="操作" width="230px">
++                    <template slot-scope="scope">
++                        <!-- slot-scope="scope" 拿到数据-->
++                        <el-button type="primary" icon="el-icon-edit" size="mini" ></el-button>
++                        <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
++                        <el-button type="warning" icon="el-icon-setting" size="mini">分配权限</el-button>
++                    </template>
++                </el-table-column>
++            </el-table>
++        </el-card>
++    </div>
++</template>
++
++<script>
++    import api from '@/api/index.js'
++    export default {
++        name: "Roles",
++        data() {
++            return {
++                rolesList:[],//角色列表
++            }
++        },
++        created() {
++            this.getRolesList();
++        },
++        methods:{
++            async getRolesList(){
++                let res = await api.getRolesList();
++                if(res.meta.status!=200) return this.$message.error("获取角色列表失败！")
++                this.rolesList = res.data;
++                console.log(res)
++            }
++        },
++        components: {}
++    }
++
++</script>
++
++<style lang="scss" scoped>
++::v-deep {
++    .el-tag{
++        margin: 10px;
++    }
++}
++.bdtop{
++    border-top: 1px solid #ddd;
++}
++.bdbottom{
++    border-bottom: 1px solid #ddd;
++}
++.vcenter{
++    display: flex;
++    align-items: center;
++}
++</style>
+\ No newline at end of file
+Index: src/plugins/element.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/plugins/element.js	(revision fbd4d791f575fe63e07677345be3195449fb30e0)
++++ src/plugins/element.js	(revision 0dfbe2334d440547b455c4310ea3669d854bbd95)
+@@ -23,7 +23,8 @@
+     Tooltip,
+     Pagination,
+     Dialog,
+-    MessageBox
++    MessageBox,
++    Tag
+ 
+ } from "element-ui";
+ Vue.use(Button)
+@@ -48,5 +49,6 @@
+ Vue.use(Tooltip)
+ Vue.use(Pagination)
+ Vue.use(Dialog)
++Vue.use(Tag)
+ Vue.prototype.$message = Message
+ Vue.prototype.$confirm = MessageBox.confirm
+\ No newline at end of file
+Index: src/router/index.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/router/index.js	(revision fbd4d791f575fe63e07677345be3195449fb30e0)
++++ src/router/index.js	(revision 0dfbe2334d440547b455c4310ea3669d854bbd95)
+@@ -4,6 +4,8 @@
+ import Home from '@/components/home/Home'
+ import Welcome from '@/components/welcome/Welcome'
+ import Users from '@/components/users/Users'
++import Rights from '@/components/rights/Rights'
++import Roles from '@/components/rights/Roles'
+ 
+ Vue.use(VueRouter)
+ 
+@@ -16,7 +18,9 @@
+     redirect:'/Welcome',
+     children:[
+       {path:'/Welcome',component:Welcome},
+-      {path: '/users', component: Users}
++      {path: '/users', component: Users},
++      {path: '/rights', component: Rights},
++      {path: '/roles', component: Roles},
+     ]
+   },
+ 

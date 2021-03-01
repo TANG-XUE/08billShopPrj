@@ -73,14 +73,15 @@
             width="50%">
             <el-tree 
                 :data="rightsList" 
-                :props="treeProps" 
+                :props="treeProps"
+                ref="treeRef"
                 show-checkbox 
                 node-key="id" 
                 default-expand-all 
                 :default-checked-keys="defkeys"></el-tree>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="cloeseRightDialog">取 消</el-button>
-                <el-button type="primary" @click="setRightDialogVisible = false">确 定</el-button>
+                <el-button type="primary" @click="allotRights">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -102,16 +103,19 @@
                     children: 'children'
                 },
                 defkeys:[],//默认的选中的节点d值数组
+                roleId:'',//即将分配权限的id
             }
         },
         created() {
             this.getRolesList();
         },
         methods:{
+            //获取角色列表
             async getRolesList(){
                 let res = await api.getRolesList();
                 if(res.meta.status!=200) return this.$message.error("获取角色列表失败！")
                 this.rolesList = res.data;
+                console.log(res.data)
             },
             //根据id删除对应的权限
             async removeRightById(role,rightsId){
@@ -133,12 +137,13 @@
             },
             //展示分配权限的对话框
             async showSetRightDialog(role){
+                this.roleId = role.id;
                 let res = await api.getRulesPowerList()
                 if(res.meta.status!=200) return this.$message.error("获取权限失败！")
                 this.rightsList = res.data;
                 //获取三级节点的id
                 this.getLeafKeys(role,this.defkeys);
-                console.log(res)
+                // console.log(res)
                 this.setRightDialogVisible = true;
             },
             //点击取消 关闭分配权限的弹窗
@@ -155,7 +160,30 @@
                 node.children.forEach(item=>{
                     this.getLeafKeys(item,arr)
                 })
-            }
+            },
+            //点击为分配权限
+            async allotRights(){
+                const keys = [
+                    ...this.$refs.treeRef.getCheckedKeys(),
+                    ...this.$refs.treeRef.getHalfCheckedKeys()
+                ];
+                const idStr = keys.join(',')
+                const params = {
+                    rids:idStr
+                }
+                let res = await api.RolesInPowerFn(this.roleId,params)
+                if(res.meta.status!=200) return this.$message.error("分配权限失败")
+                this.$message.success("分配权限成功")
+                // console.log(res)
+                this.getRolesList()
+
+                this.setRightDialogVisible = false;
+            },
+            //角色授权请求
+            // async getRolesImPower(id,){
+            //     let res = api.RolesInPowerFn()
+            //     console.log(res)
+            // }
         },
         components: {}
     }

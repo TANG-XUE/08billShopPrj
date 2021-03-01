@@ -3,15 +3,17 @@ import * as url from "./config"
 
 //axios请求拦截
 axios.interceptors.request.use(config => {
-        //为请求对象，添加Token验证的`Authorization`字段
-        /*为每一次请求都加上请求头 Authorization*/
-        config.headers.Authorization = window.sessionStorage.getItem('token')
-        return config;
-    })
-    //设置响应数据的返回格式
+    //为请求对象，添加Token验证的`Authorization`字段
+    /*为每一次请求都加上请求头 Authorization*/
+    config.headers.Authorization = window.sessionStorage.getItem('token')
+    return config;
+})
+//设置响应数据的返回格式
 axios.interceptors.response.use(response => {
     return response.data; //直接返回数据中data选项中的data[想要的数据]
 })
+//解决发送两次请求
+// axios.setHeader("Access-Control-Allow-Origin", "*");
 
 
 export default {
@@ -49,24 +51,24 @@ export default {
         | email    | 邮箱     | 可以为空 |
         | mobile   | 手机号   | 可以为空 |
     * */
-    AddUsersFn(params) {
-        return axios.post(url.AddUsers, {
+    AddUsersFn(params){
+        return axios.post(url.AddUsers,{
             ...params
         })
     },
 
-    getSearchUsers(id) {
+    getSearchUsers(id){
         return axios.get(url.SearchUsers(id))
     },
 
     /*编辑用户提交
-     * users/:id
-     * params:{
-     *   id,email,moblie
-     * }
-     * */
-    editUserFn(params) {
-        return axios.put(url.SearchUsers(params.id), {
+    * users/:id
+    * params:{
+    *   id,email,moblie
+    * }
+    * */
+    editUserFn(params){
+        return axios.put(url.SearchUsers(params.id),{
             ...params
         })
     },
@@ -75,51 +77,62 @@ export default {
         - 请求方法：delete
         - 请求参数 id用户 id不能为空`参数是url参数:id`
     * */
-    deleteUserFn(id) {
+    deleteUserFn(id){
         return axios.delete(url.deleteUser(id))
     },
+    /*用户角色分配
+    * users/:id/role
+    * params:id
+    *       rid
+    * */
+    AssignRolesFn(id,rid){
+        return axios.put(url.AssignRoles(id),{
+            rid
+        })
+    },
+
+
     /*
-     * 获取权限列表
-     * rights/:type 
-     * type类型值 list 或 tree ,
-     * list 列表显示权限,
-     * tree 树状显示权限,`参数是url参数:type`
-     * */
-    getPowerList() {
+    * 获取权限列表
+    * rights/:type get
+    * type类型值 list 或 tree ,
+    * list 列表显示权限,
+    * tree 树状显示权限,`参数是url参数:type`
+    * */
+    getPowerList(){
         return axios.get(url.PowerList)
     },
 
-    /*角色列表*/
-    getRolesList() {
+    /*角色权限列表*/
+    getRulesPowerList(){
+        return axios.get(url.RolesPowerList)
+    },
+
+    /*
+    * 获取权限列表
+    * rights/:type get
+    * type类型值 list 或 tree ,
+    * list 列表显示权限,
+    * tree 树状显示权限,`参数是url参数:type`
+    * */
+    getPowerList(){
+        return axios.get(url.PowerList)
+    },
+
+    ///角色列表
+    getRolesList(){
         return axios.get(url.RolesList)
     },
 
-    /*删除角色指定权限
-    *   - 请求路径：roles/:roleId/rights/:rightId
-        - 请求方法：delete
-        - 请求参数 
-            roleId 角色id
-            rights 权限id    
-    * */
-    deleteRolesRightsFn(roleId, rightId) {
-        return axios.delete(url.deleteRolesRights(roleId, rightId))
-    },
-    /*
-     * 所有权限列表
-     * rights/:type 
-     * type类型值 list 或 tree ,
-     * list 列表显示权限,
-     * tree 树状显示权限,`参数是url参数:type`
-     * */
-    getRulesPowerList() {
-        return axios.get(url.RulesPowerList)
-    },
 
-    /*角色授权 
-        roles/:roleId/rights
-    */
-    getImpower(params) {
-        return axios.post(url.Impower(params.roleId), {
+    /*角色授权
+    * roles/:roleId/rights
+    *   params:
+    *       :roleId角色 ID不能为空`携带在url中`rids
+    *       rids权限 ID 列表（字符串）
+    * */
+    RolesInPowerFn(roleId,params){
+        return axios.post(url.RolesInPower(roleId),{
             ...params
         })
     },
