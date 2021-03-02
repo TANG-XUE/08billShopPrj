@@ -200,6 +200,26 @@ module.exports = {
         return `${api}categories/${id}/attributes/${attrId}`
     },
 
+    /*
+     * 商品列表数据
+     * url:goods
+     * params
+         * query查询参数可以为空
+         * pagenum当前页码不能为空
+         * pagesize每页显示条数不能为空
+      * */
+    GoodsList :api +'goods',
+
+    /*
+        * 删除商品
+        * url goods/:id delete
+        * params
+            :id 商品 ID不能为空`携带在url中`
+    * */
+    DeleteGoods(id){
+        return `${api}goods/${id}`
+    },
+
 
 
 
