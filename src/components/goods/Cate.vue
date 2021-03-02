@@ -63,7 +63,7 @@
                 title="添加分类"
                 :visible.sync="addCateDialogVisible"
                 width="50%"
-                @close="addDialogClosed"
+                @close="addCateDialogClosed"
         >
             <!--内容主题区-->
             <el-form :model="addCateForm" :rules="addCateFormRules" ref="addCateFormRef" label-width="80px">
@@ -79,15 +79,18 @@
                             expand-trigger="hover"
                             :options="parentCateList"
                             :props="cascaderProps"
-                            @change="parentCateChanged">
+                            @change="parentCateChanged"
+                            clearable
+                            change-on-select
+                    >
                     </el-cascader>
                 </el-form-item>
             </el-form>
-            <!--底部区域-->
-<!--            <span slot="footer" class="dialog-footer">-->
-<!--                <el-button @click="addDialogVisible = false">取 消</el-button>-->
-<!--                <el-button type="primary" @click="addUser">确 定</el-button>-->
-<!--            </span>-->
+            <!-- 底部区域-->
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="addCateDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="addCate">确 定</el-button>
+            </span>
         </el-dialog>
 
     </div>
@@ -134,7 +137,7 @@
                 addCateForm:{
                     cat_name:'',
                     cat_level:0,//分类的等级默认是1级分类
-                    cate_pid:0
+                    cat_pid:0
                 },
                 //添加表单和编辑表单的验证规则
                 addCateFormRules:{
@@ -196,11 +199,43 @@
             },
             //选择项发生变化触发这个函数
             parentCateChanged(){
-              console.log(this.selectedKeys)
+                console.log(this.selectedKeys)
+                //如果selectedkeys的长度大于0 则已选择
+                if(this.selectedKeys.length>0){
+                    //父级分类的id
+                    this.addCateForm.cat_pid = this.selectedKeys[this.selectedKeys.length-1]
+                    //为当前分类的等级赋值
+                    this.addCateForm.cat_level = this.selectedKeys.length;
+                    return;
+                }else {
+                    this.addCateForm.cat_pid = 0
+                    this.addCateForm.cat_level = 0
+                }
             },
             //监控 添加分类的对话框的关闭
-            addDialogClosed(){
+            addCateDialogClosed(){
+                this.$refs.addCateFormRef.resetFields();
+                this.selectedKeys = [];
+                this.addCateForm.cat_pid = 0
+                this.addCateForm.cat_level = 0
+            },
+            //点击按钮 获取表单数据 调用添加分类请求
+            addCate(){
+                this.$refs.addCateFormRef.validate(valid=>{
+                    if(!valid) return;
+                    this.getAddCate()
+                });
+                console.log(this.addCateForm)
 
+            },
+            //发起添加分类的请求
+            async getAddCate(){
+                let res = await api.AddCategoriesFn(this.addCateForm);
+                if (res.meta.status !==201) return this.$message.error('添加分类失败')
+                this.$message.success('添加分类成功')
+                this.getCateList()
+                this.addCateDialogVisible = false;
+                console.log(res)
             }
         },
         components: {}
