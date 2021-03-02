@@ -195,4 +195,83 @@ export default {
         return axios.put(url.DeleteCategories(id))
     },
 
+    /*
+    * 参数列表
+        - 请求路径：categories/:id/attributes
+        - 请求方法：get
+        - 请求参数
+        *   :id分类 ID不能为空`携带在url中`
+        *   sel[only,many]不能为空,通过 only 或 many 来获取分类静态参数还是动态参数
+    * */
+    getCateAttributesList(id,params){
+        return axios.get(url.CateAttributesList(id),{
+            params
+        })
+    },
+
+    /*
+    *
+    * 添加动态参数或者静态属性
+    - 请求路径：categories/:id/attributes
+    - 请求方法：post
+    - 请求参数
+    *   :id 分类 ID不能为空`携带在url中`
+    *   attr_name参数名称不能为空
+    *   attr_sel[only,many]不能为空
+    *   attr_vals如果是 many 就需要填写值的选项，以逗号分隔【可选参数】
+    * */
+    AddCateAttributesFn(id,params){
+        return axios.post(url.AddCateAttributes(id),{
+            ...params
+        })
+    },
+
+    /*
+   *
+   * 根据 ID 查询参数
+   - 请求路径：categories/:id/attributes/:attrId
+   - 请求方法：get
+   - 请求参数
+   - 请求参数
+   *   :id分类 ID不能为空`携带在url中`
+   *   attrId 属性 ID 不能为空`携带在url中`
+   *   attr_sel[only,many]不能为空
+   *   attr_vals如果是 many 就需要填写值的选项，以逗号分隔【可选参数】
+   * */
+    getCateAttrSigle(id,attrId,params){
+        return axios.get(url.CateAttrSigle(id,attrId),{
+            params
+        })
+    },
+
+    /*
+   *   编辑提交参数
+       - 请求路径：categories/:id/attributes/:attrId
+       - 请求方法：put
+       - 请求参数
+       * :id分类 ID不能为空`携带在url中`
+       * :attrId属性 ID不能为空`携带在url中`
+       * attr_name新属性的名字不能为空，携带在`请求体`中
+       * attr_sel属性的类型[many或only]不能为空，携带在`请求体`中
+       * attr_vals参数的属性值可选参数，携带在`请求体`中
+   * */
+
+    EditCateAttrFn(id,attrId,params){
+        return axios.put(url.EditCateAttr(id,attrId),{
+            ...params
+        })
+    },
+    /*
+    * 删除参数
+        - 请求路径： categories/:id/attributes/:attrid
+        - 请求方法：delete
+        - 请求参数
+        * :id 分类 ID不能为空`携带在url中`
+        * :attrid 参数 ID不能为空`携带在url中`
+    *
+    * */
+    DeleteCateAttrFn(id,attrId){
+        return axios.delete(url.DeleteCateAttr(id,attrId))
+    },
+
 }

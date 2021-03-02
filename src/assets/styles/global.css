@@ -21,3 +21,7 @@ html,body,#app{
 .el-cascader-menu {
     height: 300px;
 }
+
+.button-new-tag{
+    width: 150px;
+}
