@@ -298,4 +298,24 @@ export default {
         return axios.delete(url.DeleteGoods(id))
     },
 
+    /*
+     * 添加商品
+     * 请求方法：post
+     * 请求参数
+     *   goods_name商品名称不能为空
+     *   goods_cat以为','分割的分类列表不能为空
+     *   goods_price价格不能为空
+     *   goods_number数量不能为空
+     *   goods_weight重量不能为空
+     *   goods_introduce介绍可以为空
+     *   pics上传的图片临时路径（对象）可以为空
+     *   attrs商品的参数（数组），包含 `动态参数` 和 `静态属性`可以为空
+     * */
+        AddGoodsFn(params){
+            return axios.post(url.AddGoods,{
+                ...params
+            })
+        },
+
+
 }

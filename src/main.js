@@ -8,8 +8,16 @@ import './assets/fonts/iconfont.css'
 
 import TreeTable from 'vue-table-with-tree-grid'
 
+import VueQuillEditor from 'vue-quill-editor'
+// require styles 导入富文本样式
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
 Vue.config.productionTip = false
 Vue.component('tree-table', TreeTable)
+Vue.use(VueQuillEditor)
+
 
 //全局过滤器
 Vue.filter('dateFormat',function (originVal) {

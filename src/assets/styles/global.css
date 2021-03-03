@@ -34,3 +34,6 @@ html,body,#app{
 .el-step__title{
     font-size: 13px;
 }
+.el-checkbox{
+    margin-right: 5px;
+}
